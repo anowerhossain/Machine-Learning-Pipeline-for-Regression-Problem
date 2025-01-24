@@ -83,6 +83,7 @@ pipeline = Pipeline(stages=[indexer, assembler, scaler, lr])
 - Combine multiple features into a single vector using VectorAssembler.
 - Standardize features with StandardScaler.
 - Use LinearRegression for prediction.
+- Build the pipeline using above 4 stages
 
 
 # Step 8: 📊 Split Data
