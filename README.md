@@ -85,3 +85,58 @@ pipeline = Pipeline(stages=[indexer, assembler, scaler, lr])
 - Use LinearRegression for prediction.
 
 
+# Step 8: 📊 Split Data
+
+```python
+(trainingData, testingData) = df.randomSplit([0.7, 0.3], seed=42)
+```
+- Split the data into training (70%) and testing (30%) sets.
+
+# Step 9: 🏋️ Train Model
+
+```python
+pipelineModel = pipeline.fit(trainingData)
+```
+
+- Train the pipeline on the training dataset.
+
+# Step 10: 🧪 Evaluate Model
+
+```python
+predictions = pipelineModel.transform(testingData)
+
+evaluator = RegressionEvaluator(predictionCol="prediction", labelCol="MPG", metricName="mse")
+mse = evaluator.evaluate(predictions)
+
+evaluator = RegressionEvaluator(predictionCol="prediction", labelCol="MPG", metricName="mae")
+mae = evaluator.evaluate(predictions)
+
+evaluator = RegressionEvaluator(predictionCol="prediction", labelCol="MPG", metricName="r2")
+r2 = evaluator.evaluate(predictions)
+
+print("Mean Squared Error = ", round(mse, 2))
+print("Mean Absolute Error = ", round(mae, 2))
+print("R Squared = ", round(r2, 2))
+```
+
+- Use RegressionEvaluator to compute MSE, MAE, and R² scores.
+
+# Step 11: 💾 Save and Reload Model
+```python
+pipelineModel.write().save("Vehicle_MPG_Pipeline")
+loadedPipelineModel = PipelineModel.load("Vehicle_MPG_Pipeline")
+```
+- Save the trained pipeline and reload it for reuse.
+
+# Step 12: 🔍 Inspect Model Coefficients
+
+```python
+loadedmodel = loadedPipelineModel.stages[-1]
+totalstages = len(loadedPipelineModel.stages)
+inputcolumns = loadedPipelineModel.stages[1].getInputCols()
+
+print("Number of stages in the pipeline = ", totalstages)
+for feature, coef in zip(inputcolumns, loadedmodel.coefficients):
+    print(f"Coefficient for {feature} = {round(coef, 4)}")
+```
+- Inspect the pipeline structure and regression coefficients.
